@@ -3,12 +3,25 @@
 #include<ctime>
 #include<list>
 #include<vector>
+#include<string>
+
+#include"utilities.h"
 
 using namespace std;
+
+#define I_X_SIZE                100    // x grid number
+#define I_Y_SIZE                100    // y grid number
+#define I_LAYER                 10     // layer number
+#define I_INITIAL_TIME_LENGTH   100    // seconds
+#define I_GRID_LENGTH           100    // meters
 
 class Car {
 
 private:
+
+  // id
+  time_t car_index;
+  time_t car_id;
 
   // time
   int date;
@@ -32,7 +45,13 @@ public:
 
   // constructor
   Car();
-  Car( double, double, double, double );
+  Car( time_t, double, double, double, double );
+
+  // id
+  void setCarIndex( int i ) { car_index = i; }
+  int getCarIndex() { return car_index; }
+  void setCarID( time_t i ) { car_id = i; }
+  time_t getCarID() { return car_id; }
   
   // time operations
   void setDate( int d ) { date = d; }
@@ -57,6 +76,10 @@ public:
   void setYStart( double x ) { y_start = x; } 
   void setXEnd( double x ) { x_end = x; } 
   void setYEnd( double x ) { y_end = x; } 
+  double getXStart() { return x_start; }
+  double getYStart() { return y_start; }
+  double getXEnd() { return x_end; }
+  double getYEnd() { return y_end; }
 
   // velocity
   void setVelocity( double v ) { velocity = v; }
@@ -69,6 +92,8 @@ public:
 
 Car::Car() {
 
+  car_index = 0;
+  car_id = 0;
   date = 0;
   time_start = 0.;
   layer = 0;
@@ -76,15 +101,17 @@ Car::Car() {
   x_end = 0.;
   y_start = 0.;
   y_end = 0.;
-  velocity = 1.;
+  velocity = 10.;
 
 }
 
 Car::Car(
-  double x1, double y1, double x2, double y2
+  time_t index, double x1, double y1, double x2, double y2
 ) {
 
   time_start = time(0);
+  car_index = index;
+  car_id = index * 1e12 + time_start;
   date = 0;
   layer = 0;
   x_start = x1;
@@ -118,50 +145,150 @@ char* printTime( time_t t ) {
 int main()
 {
 
-  // Car info
-
-  Car mycar( 0, 0, 300, 400 );
-  mycar.computeTimeEnd();
-  mycar.computeVXY();
-  cout << printTime( mycar.getTimeStart() )<< endl;
-  cout << printTime( mycar.getTimeEnd() )<< endl;
-  cout << mycar.getDuration() << endl;
-  cout << mycar.getVX() << endl;
-  cout << mycar.getVY() << endl;
-
   // last time
 
-  time_t prev_time = time(0);
+  time_t first_time = time(0);
 
-  // Map
+  // Initialize network
 
-  const int x_size = 1000;
-  const int y_size = 1000;
-  vector<list<vector<vector<bool> > > > my_network;
-  list<vector<vector<bool> > > my_layer;
+  list<vector<vector<vector<bool> > > > my_network;
 
-  time_t cursor = mycar.getTimeStart();
+  initialize_network( my_network );
+  cout << "Initial time slices: " << my_network.size() << endl;
 
-  while( cursor < mycar.getTimeEnd() ) {
+  while( true ) {
 
-    vector<vector<bool> > my_map;
-    for( int i = 0; i < x_size; i++ ) {
-      vector<bool> v;
-      for( int j = 0; j < y_size; j++ ) {
-        v.push_back( 1 );
+    string id;
+    double x_start, x_end, y_start, y_end;
+
+    cout << "input car ID to start a new trip or type 'end' to exit program: ";
+    cin >> id;
+    if( id == "end" ) {
+      cout << "last car finished." << endl;
+      exit( EXIT_SUCCESS );
+    } 
+  
+    cout << endl << "input x_start y_start x_end y_end: ";
+    cin >> x_start >> y_start >> x_end >> y_end;
+
+    // Car info
+
+    Car mycar( 0, 0, 0, 300, 400 );
+    mycar.computeTimeEnd();
+    mycar.computeVXY();
+
+    list<vector<vector<vector<bool> > > >::iterator it = my_network.begin();
+  
+    time_t cursor = mycar.getTimeStart();
+    int t0 = mycar.getTimeStart();
+    double x0 = mycar.getXStart();
+    double y0 = mycar.getYStart();
+    double vx = mycar.getVX();
+    double vy = mycar.getVY();
+    int layer = mycar.getLayer();
+  
+    while( cursor <= mycar.getTimeEnd() && it != my_network.end() ) {
+  
+      // Check if the car has a later time than the first time in network.
+      // If so, pop out the older cubics and continue to next time step. 
+      // If not, continue.
+  
+      if( cursor > first_time ) {
+  
+        first_time++;
+        it++;
+        my_network.pop_front();
+        continue;
+  
+      } 
+  
+      // Check if the car's position is already taken.
+      // If so, change to the next layer with the same time and check.
+      // If not, mark it as taken.
+  
+      int xgrid = ( x0 + vx * ( cursor - t0 ) ) / I_GRID_LENGTH;
+      int ygrid = ( y0 + vy * ( cursor - t0 ) ) / I_GRID_LENGTH;
+  
+      if( (*it)[layer][xgrid][ygrid] == 0 ) {
+  
+        (*it)[layer][xgrid][ygrid] = 1;
+  
+      } else {
+  
+        if( layer == I_LAYER - 1 ) {
+          cout << "out of layers" << endl;
+          exit( EXIT_FAILURE );
+        }
+  
+        layer++;
+        mycar.setLayer( layer );
+        continue;
+  
       }
-      my_map.push_back( v );
+  
+      cout << "time: " << cursor << " x: " << xgrid << " y: " << ygrid << endl;
+  
+      cursor++;
+      it++;
+  
     }
- 
-    my_layer.push_back( my_map );
-
-    cursor++;
+  
+    // Check if the car's time is beyond the last time in network.
+    // If so, initialize a new cubic into the network. 
+  
+    if( it == my_network.end() ) {
+  
+      // need implement
+      cout << "end" << endl;
+  
+    }
+  
+    cout << "Current time slices: " << my_network.size() << endl;
 
   }
 
-  my_network.push_back( my_layer );
-  cout << my_network[0].front()[0][0] << endl;
-  
   return 1;
+
+}
+
+void initialize_network( 
+  list<vector<vector<vector<bool> > > > &my_network
+) {
+
+  // Whole network
+
+  for( int t = 0; t < I_INITIAL_TIME_LENGTH; t++ ) {
+
+    // Each cubic at one time step
+    vector<vector<vector<bool> > > my_cubic;
+
+    for( int l = 0; l < I_LAYER; l++ ) {
+
+      // Each layer
+      vector<vector<bool> > my_layer;
+
+      for( int i = 0; i < I_X_SIZE; i++ ) {
+
+        // Each row
+        vector<bool> my_row;
+
+        for( int j = 0; j < I_Y_SIZE; j++ ) {
+
+          // Initialize as empty
+          my_row.push_back( 0 );
+
+        }
+
+        my_layer.push_back( my_row );
+
+      }
+ 
+      my_cubic.push_back( my_layer );
+
+    }
+
+    my_network.push_back( my_cubic );
+
+  }
 
 }
