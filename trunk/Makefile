@@ -21,6 +21,7 @@
 #===============================================================================
 
 SRCDIR = ./
+BOOSTDIR = /opt/local/include
 GC=g++
 VALGRIND=yes
 
@@ -30,7 +31,7 @@ VALGRIND=yes
 
 VPATH = $(SRCDIR)
 
-CINCLUDE= -I$(SRCDIR) 
+CINCLUDE= -I$(SRCDIR) -I$(BOOSTDIR) 
 
 #===============================================================================
 # BINDIR is the temporary directory for code executables.
@@ -72,7 +73,7 @@ CC=$(GC) $(CINCLUDE)
 # object files are created.
 #===============================================================================
 
-OBJDIR = ../obj/
+OBJDIR = ./obj/
 
 OBJ_DIR := $(shell mkdir -p $(OBJDIR))
 
