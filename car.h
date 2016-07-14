@@ -23,6 +23,8 @@
 #include <vector>
 #include <string>
 
+#define DEFAULT_VELOCITY 20       // default velocity (m/s)
+
 //##############################################################################
 // Typedefs.
 //##############################################################################
@@ -57,7 +59,7 @@ public:
 
   // constructor
   Car();
-  Car( time_t, double, double, double, double );
+  Car( int, double, double, double, double );
 
   // id
   int getCarIndex() { return car_index; }
@@ -84,5 +86,13 @@ public:
   double getVY() { return vy; }
 
 };
+
+double computeVX( 
+  double, double, double, double, double
+);
+
+double computeVY( 
+  double, double, double, double, double
+);
 
 #endif // CIA_CAR_H
