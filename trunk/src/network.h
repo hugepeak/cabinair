@@ -26,14 +26,14 @@
 #define I_INITIAL_TIME_LENGTH   100    // seconds
 #define D_X_GRID_LENGTH         10.    // x grid length in meters
 #define D_Y_GRID_LENGTH         10.    // y grid length in meters
-#define D_X_MIN                 0.     // min x in meters
-#define D_Y_MIN                 0.     // min y in meters
+#define D_X_MIN                 0.     // min x in meters, should be unsigned
+#define D_Y_MIN                 0.     // min y in meters, should be unsigned
 
 class Network {
 
 private:
 
-  int layer_number;
+  size_t layer_number;
   time_t first_time;
   std::list<std::vector<std::vector<std::vector<int> > > > network;
 
@@ -41,17 +41,17 @@ public:
 
   Network();
 
-  void setLayer( int _layer_number ) { layer_number = _layer_number; }
-  int getLayerNumber() { return layer_number; }
+  void setLayer( size_t _layer_number ) { layer_number = _layer_number; }
+  size_t getLayerNumber() { return layer_number; }
 
   void setFirstTime( time_t _first_time ) { first_time = _first_time; }
-  int getFirstTime() { return first_time; }
+  time_t getFirstTime() { return first_time; }
 
   std::list<std::vector<std::vector<std::vector<int> > > > getNetwork() {
     return network;
   }
 
-  int getSize() { return network.size(); }
+  size_t getSize() { return network.size(); }
   int add_empty_cubic();
   void popFront() { network.pop_front(); }
 
@@ -63,25 +63,25 @@ public:
     getNetworkBack() { return network.back(); }
   int getElement( 
     std::list<std::vector<std::vector<std::vector<int> > > >::iterator it,
-    int layer, 
-    int xgrid, 
-    int ygrid
+    size_t layer, 
+    size_t xgrid, 
+    size_t ygrid
   ) {
     return (*it)[layer][xgrid][ygrid]; 
   }
   void setElement( 
     std::list<std::vector<std::vector<std::vector<int> > > >::iterator it,
-    int layer, 
-    int xgrid, 
-    int ygrid,
+    size_t layer, 
+    size_t xgrid, 
+    size_t ygrid,
     int value
   ) {
     (*it)[layer][xgrid][ygrid] = value;
   }
   void setLastElement( 
-    int layer, 
-    int xgrid, 
-    int ygrid,
+    size_t layer, 
+    size_t xgrid, 
+    size_t ygrid,
     int value
   ) {
     network.back()[layer][xgrid][ygrid] = value;
