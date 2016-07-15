@@ -20,7 +20,7 @@
 # executable with Valgrind:
 #===============================================================================
 
-SRCDIR = ./
+SRCDIR = ../src
 BOOSTDIR = /opt/local/include
 GC=g++
 VALGRIND=yes
@@ -73,7 +73,7 @@ CC=$(GC) $(CINCLUDE)
 # object files are created.
 #===============================================================================
 
-OBJDIR = ./obj/
+OBJDIR = ../obj/
 
 OBJ_DIR := $(shell mkdir -p $(OBJDIR))
 
