@@ -38,11 +38,7 @@
 
   Overview of directory contents and compatibility notes.
 
-car.cpp
-
-  Car class declarations.
-
-car.h
-
-  The header file for car.cpp.
-
+To compile examples:
+>cd examples
+>make clean
+>make all
