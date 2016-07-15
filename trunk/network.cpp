@@ -4,39 +4,44 @@ void initialize_network(
   std::list<std::vector<std::vector<std::vector<int> > > > &my_network
 ) {
 
-  // Whole network
   for( int t = 0; t < I_INITIAL_TIME_LENGTH; t++ ) {
 
-    // Each cubic at one time step
-    std::vector<std::vector<std::vector<int> > > my_cubic;
+    add_empty_cubic_to_network( my_network );
 
-    for( int l = 0; l < I_LAYER; l++ ) {
+  }
 
-      // Each layer
-      std::vector<std::vector<int> > my_layer;
+  return;
 
-      for( int i = 0; i < I_X_SIZE; i++ ) {
+}
 
-        // Each row
-        std::vector<int> my_row;
+void add_empty_cubic_to_network(
+  std::list<std::vector<std::vector<std::vector<int> > > > &my_network
+) {
 
-        for( int j = 0; j < I_Y_SIZE; j++ ) {
+  std::vector<std::vector<std::vector<int> > > my_cubic;
 
-          // Initialize as empty
-          my_row.push_back( 0 );
+  for( int l = 0; l < I_LAYER; l++ ) {
 
-        }
+    std::vector<std::vector<int> > my_layer;
 
-        my_layer.push_back( my_row );
+    for( int i = 0; i < I_X_SIZE; i++ ) {
+
+      std::vector<int> my_row;
+
+      for( int j = 0; j < I_Y_SIZE; j++ ) {
+
+        my_row.push_back( 0 );
 
       }
- 
-      my_cubic.push_back( my_layer );
+
+      my_layer.push_back( my_row );
 
     }
 
-    my_network.push_back( my_cubic );
+    my_cubic.push_back( my_layer );
 
   }
+
+  my_network.push_back( my_cubic );
 
 }
