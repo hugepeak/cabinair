@@ -6,7 +6,7 @@ Car::Car(
 
   time_start = time(0);
   car_id = _car_id;
-  car_index = car_id * 1e12 + time_start;
+  car_index = time_t(car_id * 1e12) + time_start;
   date = 0;
   layer = 0;
   x_start = _x_start;
@@ -17,8 +17,10 @@ Car::Car(
   vx = computeVX( velocity, x_start, y_start, x_end, y_end );
   vy = computeVY( velocity, x_start, y_start, x_end, y_end );
   duration = 
-    sqrt( pow( y_end - y_start, 2 ) + pow( x_end - x_start, 2 ) )
-      / velocity;
+    time_t(
+      sqrt( pow( y_end - y_start, 2. ) + pow( x_end - x_start, 2. ) )
+        / velocity
+    );
   time_end = 
     time_start + duration;
 

@@ -31,7 +31,7 @@ VALGRIND=yes
 
 VPATH = $(SRCDIR)
 
-CINCLUDE= -I$(SRCDIR) -I$(BOOSTDIR) 
+CINCLUDE= -I$(SRCDIR) -isystem$(BOOSTDIR) 
 
 #===============================================================================
 # BINDIR is the temporary directory for code executables.
@@ -51,7 +51,7 @@ CFLAGS1= -ansi -pedantic -Werror -Wall -W \
          -Wconversion -Wshadow \
          -Wpointer-arith -Wcast-qual -Wcast-align \
          -Wwrite-strings \
-         -fshort-enums -fno-common -Dinline= -g
+         -fshort-enums -fno-common
 
 ifeq ($(GC), gcc)
   CFLAGS2= $(CFLAGS1) -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs
@@ -65,8 +65,7 @@ else
   CFLAGS= $(CFLAGS2) -O2
 endif
 
-#CC=$(GC) $(CFLAGS) $(CINCLUDE)
-CC=$(GC) $(CINCLUDE)
+CC=$(GC) $(CFLAGS) $(CINCLUDE)
 
 #===============================================================================
 # OBJDIR is the temporary directory for codes compilation, this is where

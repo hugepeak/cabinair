@@ -44,7 +44,7 @@ private:
   time_t duration;
   
   // position(meter)
-  int layer;      // layer index 
+  size_t layer;      // layer index 
   double x_start;
   double y_start;
   double x_end;
@@ -62,7 +62,7 @@ public:
   Car( int, double, double, double, double );
 
   // id
-  int getCarIndex() { return car_index; }
+  time_t getCarIndex() { return car_index; }
   int getCarID() { return car_id; }
   
   // time operations
@@ -72,15 +72,15 @@ public:
   time_t getDuration() { return duration; }
 
   // position operations
-  void setLayer( int l ) { layer = l; }
-  int getLayer() { return layer; }
+  void setLayer( size_t _layer ) { layer = _layer; }
+  size_t getLayer() { return layer; }
   double getXStart() { return x_start; }
   double getYStart() { return y_start; }
   double getXEnd() { return x_end; }
   double getYEnd() { return y_end; }
 
   // velocity
-  void setVelocity( double );
+  void setVelocity( double _velocity ) { velocity = _velocity; }
   double getVelocity() { return velocity; }
   double getVX() { return vx; }
   double getVY() { return vy; }

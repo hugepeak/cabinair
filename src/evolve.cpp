@@ -15,7 +15,7 @@ int evolve_car(
   double y_start = mycar->getYStart();
   double vx = mycar->getVX();
   double vy = mycar->getVY();
-  int car_layer = mycar->getLayer();
+  size_t car_layer = mycar->getLayer();
   int car_id = mycar->getCarID();
 
   while( t_cursor <= t_end && it != mynet->getNetworkEnd() ) {
@@ -40,10 +40,14 @@ int evolve_car(
     // If not, mark it with the car's ID.
     //==========================================================================
 
-    int xgrid = 
-      floor( ( x_start + vx * ( t_cursor - t_start ) ) / D_X_GRID_LENGTH );
-    int ygrid = 
-      floor( ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH );
+    size_t xgrid = 
+      size_t(
+        ( x_start + vx * ( t_cursor - t_start ) ) / D_X_GRID_LENGTH
+      );
+    size_t ygrid = 
+      size_t(
+        ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH
+    );
 
     if( mynet->getElement( it, car_layer, xgrid, ygrid ) == 0 ) {
 
@@ -81,10 +85,14 @@ int evolve_car(
 
       mynet->add_empty_cubic();
 
-      int xgrid = 
-        floor( ( x_start + vx * ( t_cursor - t_start ) ) / D_X_GRID_LENGTH );
-      int ygrid = 
-        floor( ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH );
+      size_t xgrid = 
+        size_t(
+        ( x_start + vx * ( t_cursor - t_start ) ) / D_X_GRID_LENGTH
+      );
+      size_t ygrid = 
+        size_t(
+        ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH
+      );
   
       mynet->setLastElement( car_layer, xgrid, ygrid, car_id );
 

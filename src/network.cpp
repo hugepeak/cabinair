@@ -3,7 +3,9 @@
 Network::Network() {
 
   layer_number = I_DEFAULT_LAYER_NUMBER;
+
   first_time = time(0);
+
   for( int t = 0; t < I_INITIAL_TIME_LENGTH; t++ ) {
     add_empty_cubic();
   }
@@ -14,7 +16,7 @@ int Network::add_empty_cubic() {
 
   std::vector<std::vector<std::vector<int> > > my_cubic;
 
-  for( int l = 0; l < layer_number; l++ ) {
+  for( size_t l = 0; l < layer_number; l++ ) {
 
     std::vector<std::vector<int> > my_layer;
 
