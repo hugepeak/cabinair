@@ -81,8 +81,9 @@ OBJ_DIR := $(shell mkdir -p $(OBJDIR))
 # Objects.
 #===============================================================================
 
-OBJS =  $(OBJDIR)car.o \
-	$(OBJDIR)network.o
+OBJS =  $(OBJDIR)car.o     \
+	$(OBJDIR)network.o \
+        $(OBJDIR)evolve.o
 
 $(OBJS): $(OBJDIR)%.o: %.cpp
 	$(CC) -c -o $@ $<
@@ -92,7 +93,8 @@ $(OBJS): $(OBJDIR)%.o: %.cpp
 #===============================================================================
 
 EXEC = \
-  run_network \
+  run_network       \
+  run_network_stdin \
 
 $(EXEC) : $(OBJS)
 	$(CC) $(OBJS) -o $(BINDIR)/$@ $@.cpp

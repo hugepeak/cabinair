@@ -13,7 +13,6 @@
 void initialize_network(
   std::list<std::vector<std::vector<std::vector<int> > > > &
 );
-
 void add_empty_cubic_to_network(
   std::list<std::vector<std::vector<std::vector<int> > > > &
 );
