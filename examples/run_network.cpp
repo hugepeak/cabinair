@@ -82,9 +82,9 @@ int main()
       //========================================================================
   
       int xgrid = 
-        floor( ( x_start + vx * ( t_cursor - t_start ) ) / I_GRID_LENGTH );
+        floor( ( x_start + vx * ( t_cursor - t_start ) ) / D_X_GRID_LENGTH );
       int ygrid = 
-        floor( ( y_start + vy * ( t_cursor - t_start ) ) / I_GRID_LENGTH );
+        floor( ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH );
   
       if( (*it)[layer][xgrid][ygrid] == 0 ) {
   
@@ -123,9 +123,9 @@ int main()
         add_empty_cubic_to_network( my_network );
 
         int xgrid = 
-          floor( ( x_start + vx * ( t_cursor - t_start ) ) / I_GRID_LENGTH );
+          floor( ( x_start + vx * ( t_cursor - t_start ) ) / D_X_GRID_LENGTH );
         int ygrid = 
-          floor( ( y_start + vy * ( t_cursor - t_start ) ) / I_GRID_LENGTH );
+          floor( ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH );
     
         my_network.back()[layer][xgrid][ygrid] = car_id;
 
@@ -182,12 +182,62 @@ Car * readinput(void) {
   // Get start and end locations.
   //============================================================================
 
+  std::string sx_start, sx_end, sy_start, sy_end;
   double x_start, x_end, y_start, y_end;
 
-  std::cout << std::endl << "input x_start y_start x_end y_end: ";
-  std::cin >> x_start >> y_start >> x_end >> y_end;
+  while( true ) {
 
-         // Check input here. Need to be implemented.
+    std::cout << std::endl << "input x_start y_start x_end y_end (in meters): ";
+    std::cin >> sx_start >> sy_start >> sx_end >> sy_end;
+  
+    try {
+      x_start = boost::lexical_cast<double>( sx_start );
+    } 
+    catch( boost::bad_lexical_cast& e ) {
+      std::cout << "x_start must be a number!" << std::endl;
+      continue;
+    }
+
+    try {
+      y_start = boost::lexical_cast<double>( sy_start );
+    } 
+    catch( boost::bad_lexical_cast& e ) {
+      std::cout << "y_start must be a number!" << std::endl;
+      continue;
+    }
+
+    try {
+      x_end = boost::lexical_cast<double>( sx_end );
+    } 
+    catch( boost::bad_lexical_cast& e ) {
+      std::cout << "x_end must be a number!" << std::endl;
+      continue;
+    }
+
+    try {
+      y_end = boost::lexical_cast<double>( sy_end );
+    } 
+    catch( boost::bad_lexical_cast& e ) {
+      std::cout << "y_end must be a number!" << std::endl;
+      continue;
+    }
+
+    double x_max = D_X_MIN + I_X_SIZE * D_X_GRID_LENGTH;
+    double y_max = D_Y_MIN + I_Y_SIZE * D_Y_GRID_LENGTH;
+
+    if( 
+      x_start < D_X_MIN || y_start < D_Y_MIN || x_end < D_X_MIN || 
+      y_end < D_Y_MIN || x_start > x_max || y_start > y_max ||
+      x_end > x_max || y_end > y_max
+    ) {
+      std::cout << "location out of range!" << std::endl;
+      continue;
+    }
+
+    break;
+
+  }
+
 
   //============================================================================
   // Intialize mycar.
