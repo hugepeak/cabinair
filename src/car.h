@@ -23,7 +23,7 @@
 #include <vector>
 #include <string>
 
-#define DEFAULT_VELOCITY 20       // default velocity (m/s)
+#define DEFAULT_VELOCITY 10       // default velocity (m/s)
 
 //##############################################################################
 // Typedefs.
