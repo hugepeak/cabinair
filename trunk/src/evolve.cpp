@@ -1,13 +1,12 @@
 #include "evolve.h"
 
 int evolve_car( 
-  std::list<std::vector<std::vector<std::vector<int> > > > &my_network,
-  Car * mycar,
-  time_t first_network_time
+  Network * mynet,
+  Car * mycar
 ) {
 
   std::list<std::vector<std::vector<std::vector<int> > > >::iterator it = 
-    my_network.begin();
+    mynet->getNetworkBegin();
 
   time_t t_start = mycar->getTimeStart();
   time_t t_cursor = t_start;
@@ -16,21 +15,21 @@ int evolve_car(
   double y_start = mycar->getYStart();
   double vx = mycar->getVX();
   double vy = mycar->getVY();
-  int layer = mycar->getLayer();
+  int car_layer = mycar->getLayer();
   int car_id = mycar->getCarID();
 
-  while( t_cursor <= t_end && it != my_network.end() ) {
+  while( t_cursor <= t_end && it != mynet->getNetworkEnd() ) {
 
     //==========================================================================
     // Check if the car has a later time than the first time in network.
     // If so, pop out the past cubics and continue to next time step. 
     //==========================================================================
 
-    if( t_start > first_network_time ) {
+    if( t_start > mynet->getFirstTime() ) {
 
-      first_network_time++;
       it++;
-      my_network.pop_front();
+      mynet->popFront();
+      mynet->setFirstTime( mynet->getFirstTime() + 1 );
       continue;
 
     } 
@@ -46,19 +45,19 @@ int evolve_car(
     int ygrid = 
       floor( ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH );
 
-    if( (*it)[layer][xgrid][ygrid] == 0 ) {
+    if( mynet->getElement( it, car_layer, xgrid, ygrid ) == 0 ) {
 
-      (*it)[layer][xgrid][ygrid] = car_id;
+      mynet->setElement( it, car_layer, xgrid, ygrid, car_id );
 
     } else {
 
-      if( layer == I_LAYER - 1 ) {
+      if( car_layer == mynet->getLayerNumber() - 1 ) {
         std::cout << "Out of layers!" << std::endl;
         return 0;
       }
 
-      layer++;
-      mycar->setLayer( layer );
+      car_layer++;
+      mycar->setLayer( car_layer );
       continue;
 
     }
@@ -76,20 +75,22 @@ int evolve_car(
   // If so, initialize new cubics of the rest of car's times into the network.
   //============================================================================
 
-  if( it == my_network.end() ) {
+  if( it == mynet->getNetworkEnd() ) {
 
     for( ; t_cursor <= t_end; t_cursor++ ) {
 
-      add_empty_cubic_to_network( my_network );
+      mynet->add_empty_cubic();
 
       int xgrid = 
         floor( ( x_start + vx * ( t_cursor - t_start ) ) / D_X_GRID_LENGTH );
       int ygrid = 
         floor( ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH );
   
-      my_network.back()[layer][xgrid][ygrid] = car_id;
+      mynet->setLastElement( car_layer, xgrid, ygrid, car_id );
 
-      std::cout << "add cubic to network" << std::endl;
+      std::cout << "added cubic to network: " << t_cursor << " ";
+      std::cout << mynet->getNetworkBack()[car_layer][xgrid][ygrid] << " ";
+      std::cout << std::endl;
       std::cout << "time: " << t_cursor << " x: " << xgrid << " y: " << ygrid;
       std::cout << std::endl;
 

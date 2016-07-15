@@ -9,20 +9,12 @@ int main()
 {
 
   //============================================================================
-  // Save first time in the current network.
-  //============================================================================
-
-  time_t first_network_time = time(0);
-
-  //============================================================================
   // Initialize network.
   //============================================================================
 
-  std::list<std::vector<std::vector<std::vector<int> > > > my_network;
+  Network * mynet = new Network();
 
-  initialize_network( my_network );
-
-  std::cout << "Current network size: " << my_network.size() << std::endl;
+  std::cout << "Current network size: " << mynet->getSize() << std::endl;
 
   //============================================================================
   // Evolve.
@@ -41,15 +33,17 @@ int main()
       exit( EXIT_SUCCESS );
     }
 
-    if( evolve_car( my_network, mycar, first_network_time ) == 0 ) {
+    if( evolve_car( mynet, mycar ) == 0 ) {
       exit( EXIT_FAILURE );
     }
 
-    std::cout << "Current network size: " << my_network.size() << std::endl;
+    std::cout << "Current network size: " << mynet->getSize() << std::endl;
 
     delete mycar;
 
   }
+
+  delete mynet;
 
   return 0;
 

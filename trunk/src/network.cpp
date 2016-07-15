@@ -1,26 +1,20 @@
 #include "network.h"
 
-void initialize_network( 
-  std::list<std::vector<std::vector<std::vector<int> > > > &my_network
-) {
+Network::Network() {
 
+  layer_number = I_DEFAULT_LAYER_NUMBER;
+  first_time = time(0);
   for( int t = 0; t < I_INITIAL_TIME_LENGTH; t++ ) {
-
-    add_empty_cubic_to_network( my_network );
-
+    add_empty_cubic();
   }
-
-  return;
 
 }
 
-void add_empty_cubic_to_network(
-  std::list<std::vector<std::vector<std::vector<int> > > > &my_network
-) {
+int Network::add_empty_cubic() {
 
   std::vector<std::vector<std::vector<int> > > my_cubic;
 
-  for( int l = 0; l < I_LAYER; l++ ) {
+  for( int l = 0; l < layer_number; l++ ) {
 
     std::vector<std::vector<int> > my_layer;
 
@@ -42,7 +36,9 @@ void add_empty_cubic_to_network(
 
   }
 
-  my_network.push_back( my_cubic );
+  network.push_back( my_cubic );
+
+  return 1;
 
 }
 
