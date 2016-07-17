@@ -74,3 +74,4 @@ double computeVY(
     sqrt( pow( y_end - y_start, 2 ) + pow( x_end - x_start, 2 ) );
 
 }
+
