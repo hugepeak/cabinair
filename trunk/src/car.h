@@ -80,7 +80,7 @@ public:
   double getYEnd() { return y_end; }
 
   // velocity
-  void setVelocity( double _velocity ) { velocity = _velocity; }
+  void setVelocity( double );
   double getVelocity() { return velocity; }
   double getVX() { return vx; }
   double getVY() { return vy; }
