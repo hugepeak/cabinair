@@ -94,6 +94,7 @@ $(OBJS): $(OBJDIR)%.o: %.cpp
 EXEC = \
   run_network       \
   run_network_stdin \
+  generate_car_data \
 
 $(EXEC) : $(OBJS)
 	$(CC) $(OBJS) -o $(BINDIR)/$@ $@.cpp

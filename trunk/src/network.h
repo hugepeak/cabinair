@@ -20,8 +20,8 @@
 #include <list>
 #include <ctime>
 
-#define I_X_SIZE                100    // x grid number
-#define I_Y_SIZE                100    // y grid number
+#define I_X_SIZE                200    // x grid number
+#define I_Y_SIZE                200    // y grid number
 #define I_DEFAULT_LAYER_NUMBER  10     // default layer number
 #define I_INITIAL_TIME_LENGTH   100    // seconds
 #define D_X_GRID_LENGTH         10.    // x grid length in meters
@@ -86,6 +86,7 @@ public:
   ) {
     network.back()[layer][xgrid][ygrid] = value;
   }
+  void writeOutput() {};
 
 };
 

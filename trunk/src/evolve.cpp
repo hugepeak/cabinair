@@ -18,6 +18,13 @@ int evolve_car(
   size_t car_layer = mycar->getLayer();
   int car_id = mycar->getCarID();
 
+  std::cout << std::endl;
+  std::cout << "New car! ID: " << car_id << std::endl;
+  std::cout << "x_start: " << x_start << " y_start: " << y_start << std::endl;
+  std::cout << "x_end: " << mycar->getXEnd();
+  std::cout << " y_end: " << mycar->getYEnd() << std::endl;
+  std::cout << "Duration(s): " << mycar->getDuration() << std::endl;
+
   while( t_cursor <= t_end && it != mynet->getNetworkEnd() ) {
 
     //==========================================================================
@@ -28,6 +35,7 @@ int evolve_car(
     if( t_start > mynet->getFirstTime() ) {
 
       it++;
+      mynet->writeOutput();
       mynet->popFront();
       mynet->setFirstTime( mynet->getFirstTime() + 1 );
       continue;
@@ -66,7 +74,9 @@ int evolve_car(
 
     }
 
-    std::cout << "time: " << t_cursor << " x: " << xgrid << " y: " << ygrid;
+    std::cout << "time: " << t_cursor << " x: " << std::setw(3) << xgrid;
+    std::cout << " y: " << std::setw(3) << ygrid;
+    std::cout << " z: " << car_layer << " carID: " << car_id;
     std::cout << std::endl;
 
     t_cursor++;
@@ -96,10 +106,9 @@ int evolve_car(
   
       mynet->setLastElement( car_layer, xgrid, ygrid, car_id );
 
-      std::cout << "added cubic to network: " << t_cursor << " ";
-      std::cout << mynet->getNetworkBack()[car_layer][xgrid][ygrid] << " ";
-      std::cout << std::endl;
+      std::cout << "Added cubic to network!" << std::endl;
       std::cout << "time: " << t_cursor << " x: " << xgrid << " y: " << ygrid;
+      std::cout << " z: " << car_layer << " carID: " << car_id;
       std::cout << std::endl;
 
     }
@@ -109,3 +118,70 @@ int evolve_car(
   return 1;
 
 }
+
+Car * createCarFromInputLine( std::string line ) {
+
+  std::istringstream iss( line );
+  std::string s_sub;
+  std::vector<std::string> vs_inputs;
+
+  while( iss ) {
+    iss >> s_sub;
+    vs_inputs.push_back( s_sub );
+  }
+  // pop the "\n" at the end.
+  vs_inputs.pop_back();
+
+  if( vs_inputs.size() != 5 ) {
+    std::cout << "Input format: carID xstart ystart xend yend";
+    std::cout << std::endl;
+    return NULL;
+  }
+
+  int i_id;
+
+  try {
+    i_id = boost::lexical_cast<int>( vs_inputs[0] );
+  } 
+  catch( boost::bad_lexical_cast& e ) {
+    std::cout << "Car ID must be an integer!" << std::endl;
+    return NULL;
+  }
+  if( i_id <= 0 ) {
+    std::cout << "Car ID must be a positive integer!" << std::endl;
+    return NULL;
+  }
+
+  double d_x_max = D_X_MIN + I_X_SIZE * D_X_GRID_LENGTH;
+  double d_y_max = D_Y_MIN + I_Y_SIZE * D_Y_GRID_LENGTH;
+  std::vector<double> vd_loc;
+  double d_location;
+
+  for( size_t i = 1; i < vs_inputs.size(); i++ ) {
+
+    try {
+      d_location = boost::lexical_cast<double>( vs_inputs[i] );
+    } 
+    catch( boost::bad_lexical_cast& e ) {
+      std::cout << "Location must be a number!" << std::endl;
+      continue;
+    }
+
+    double d_min = ( i % 2 == 0 ) ? D_Y_MIN : D_X_MIN;
+    double d_max = ( i % 2 == 0 ) ? d_y_max : d_x_max;
+
+    if( d_location < d_min || d_location > d_max ) {
+      std::cout << "location out of range:" << d_location << std::endl;
+      return NULL;
+    }
+
+    vd_loc.push_back( d_location );
+
+  }
+
+  Car * mycar = new Car( i_id, vd_loc[0], vd_loc[1], vd_loc[2], vd_loc[3] );
+
+  return mycar;
+
+}
+
