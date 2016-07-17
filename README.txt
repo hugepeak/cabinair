@@ -42,3 +42,5 @@ To compile examples:
 >cd examples
 >make clean
 >make all
+>./generate_car_data
+>./run_network

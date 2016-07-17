@@ -1,4 +1,4 @@
-#include "network2.h"
+#include "network.h"
 
 Network::Network() {
 
@@ -30,3 +30,6 @@ int Network::add_empty_cube() {
 
 }
 
+void Network::outputFront() {
+
+}

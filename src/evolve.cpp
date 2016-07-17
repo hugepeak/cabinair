@@ -34,7 +34,7 @@ int evolve_car(
     if( t_start > mynet->getFirstTime() ) {
 
       it++;
-      mynet->writeOutput();
+      mynet->outputFront();
       mynet->popFront();
       mynet->setFirstTime( mynet->getFirstTime() + 1 );
       continue;
