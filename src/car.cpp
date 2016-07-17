@@ -48,7 +48,6 @@ Car::Car() {
 void Car::setVelocity( double _velocity ) { 
 
   velocity = _velocity;
-
   vx = computeVX( velocity, x_start, y_start, x_end, y_end );
   vy = computeVY( velocity, x_start, y_start, x_end, y_end );
 
