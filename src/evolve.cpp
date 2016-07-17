@@ -5,8 +5,7 @@ int evolve_car(
   Car * mycar
 ) {
 
-  std::list<std::vector<std::vector<std::vector<int> > > >::iterator it = 
-    mynet->getNetworkBegin();
+  network_it_t it = mynet->getNetworkBegin();
 
   time_t t_start = mycar->getTimeStart();
   time_t t_cursor = t_start;
@@ -29,7 +28,7 @@ int evolve_car(
 
     //==========================================================================
     // Check if the car has a later time than the first time in network.
-    // If so, pop out the past cubics and continue to next time step. 
+    // If so, pop out the past cubes and continue to next time step. 
     //==========================================================================
 
     if( t_start > mynet->getFirstTime() ) {
@@ -86,14 +85,14 @@ int evolve_car(
 
   //============================================================================
   // Check if the car's time is beyond the last time in network.
-  // If so, initialize new cubics of the rest of car's times into the network.
+  // If so, initialize new cubes of the rest of car's times into the network.
   //============================================================================
 
   if( it == mynet->getNetworkEnd() ) {
 
     for( ; t_cursor <= t_end; t_cursor++ ) {
 
-      mynet->add_empty_cubic();
+      mynet->add_empty_cube();
 
       size_t xgrid = 
         size_t(
@@ -106,7 +105,7 @@ int evolve_car(
   
       mynet->setLastElement( car_layer, xgrid, ygrid, car_id );
 
-      std::cout << "Added cubic to network!" << std::endl;
+      std::cout << "Added cube to network!" << std::endl;
       std::cout << "time: " << t_cursor << " x: " << xgrid << " y: " << ygrid;
       std::cout << " z: " << car_layer << " carID: " << car_id;
       std::cout << std::endl;
