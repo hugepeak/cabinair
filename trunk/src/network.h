@@ -19,6 +19,7 @@
 #include <vector>
 #include <list>
 #include <ctime>
+#include <fstream>
 #include <boost/array.hpp>
 
 #define I_X_SIZE                200    // x grid number
@@ -64,6 +65,7 @@ private:
   size_t layer_number;
   time_t first_time;
   network_t network;
+  std::ofstream output_file;
 
 public:
 
@@ -108,7 +110,8 @@ public:
     network.back()[layer][xgrid][ygrid] = value;
   }
 
-  void writeOutput() {};
+  void outputNetwork();
+  void outputFront();
 
 };
 
