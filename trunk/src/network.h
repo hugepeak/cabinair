@@ -22,10 +22,10 @@
 #include <fstream>
 #include <boost/array.hpp>
 
-#define I_X_SIZE                200    // x grid number
-#define I_Y_SIZE                200    // y grid number
-#define I_LAYER                 10     // default layer number
-#define I_INITIAL_TIME_LENGTH   100    // seconds
+#define I_X_SIZE                200    // default x grid number
+#define I_Y_SIZE                200    // default y grid number
+#define I_Z_SIZE                10     // default z grid number
+#define I_INITIAL_TIME_LENGTH   100    // initial time in network in seconds
 #define D_X_GRID_LENGTH         10.    // x grid length in meters
 #define D_Y_GRID_LENGTH         10.    // y grid length in meters
 #define D_X_MIN                 0.     // min x in meters, should be unsigned
@@ -35,23 +35,23 @@ typedef
   std::list<
     boost::array<
       boost::array<
-        boost::array<int,I_Y_SIZE>,I_X_SIZE
-      >,I_LAYER
+        boost::array<int,I_Z_SIZE>,I_Y_SIZE
+      >,I_X_SIZE
     >
   > network_t;
 typedef
   std::list<
     boost::array<
       boost::array<
-        boost::array<int,I_Y_SIZE>,I_X_SIZE
-      >,I_LAYER
+        boost::array<int,I_Z_SIZE>,I_Y_SIZE
+      >,I_X_SIZE
     >
   >::iterator network_it_t;
 typedef
   boost::array<
     boost::array<
-      boost::array<int,I_Y_SIZE>,I_X_SIZE
-    >,I_LAYER
+      boost::array<int,I_Z_SIZE>,I_Y_SIZE
+    >,I_X_SIZE
   > cube_t;
 
 /*//////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,9 @@ class Network {
 
 private:
 
-  size_t layer_number;
+  size_t x_size;
+  size_t y_size;
+  size_t z_size;
   time_t first_time;
   network_t network;
   std::ofstream output_file;
@@ -71,47 +73,55 @@ public:
 
   Network();
 
-  void setLayer( size_t _layer_number ) { layer_number = _layer_number; }
-  size_t getLayerNumber() { return layer_number; }
+  void setXSize( size_t _x_size ) { x_size = _x_size; }
+  size_t getXSize() { return z_size; }
+  void setYSize( size_t _y_size ) { y_size = _y_size; }
+  size_t getYSize() { return z_size; }
+  void setZSize( size_t _z_size ) { z_size = _z_size; }
+  size_t getZSize() { return z_size; }
 
   void setFirstTime( time_t _first_time ) { first_time = _first_time; }
   time_t getFirstTime() { return first_time; }
 
-  int add_empty_cube();
-  size_t getSize() { return network.size(); }
-  void popFront() { network.pop_front(); }
+  void addEmptyCubeToNetwork();
+
+  size_t getNetworkSize() { return network.size(); }
 
   network_it_t getNetworkBegin() { return network.begin(); }
   network_it_t getNetworkEnd() { return network.end(); }
   cube_t getNetworkBack() { return network.back(); }
-  int getElement( 
+  int getNetworkElement( 
     network_it_t it,
-    size_t layer, 
-    size_t xgrid, 
-    size_t ygrid
+    size_t x_coord, 
+    size_t y_coord,
+    size_t z_coord 
   ) {
-    return (*it)[layer][xgrid][ygrid]; 
+    return (*it)[x_coord][y_coord][z_coord]; 
   }
-  void setElement( 
+  void setNetworkElement( 
     network_it_t it,
-    size_t layer, 
-    size_t xgrid, 
-    size_t ygrid,
+    size_t x_coord, 
+    size_t y_coord,
+    size_t z_coord, 
     int value
   ) {
-    (*it)[layer][xgrid][ygrid] = value;
+    (*it)[x_coord][y_coord][z_coord] = value;
   }
-  void setLastElement( 
-    size_t layer, 
-    size_t xgrid, 
-    size_t ygrid,
+  void setNetworkLastTimeElement( 
+    size_t x_coord, 
+    size_t y_coord,
+    size_t z_coord, 
     int value
   ) {
-    network.back()[layer][xgrid][ygrid] = value;
+    network.back()[x_coord][y_coord][z_coord] = value;
   }
 
+  void popNetworkFront() { network.pop_front(); }
+  void openOutputFile( std::string );
+  bool isOutputFileOpen();
+  void closeOutputFile();
   void outputNetwork();
-  void outputFront();
+  void outputNetworkFront();
 
 };
 

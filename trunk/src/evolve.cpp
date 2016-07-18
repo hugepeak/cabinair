@@ -14,7 +14,7 @@ int evolve_car(
   double y_start = mycar->getYStart();
   double vx = mycar->getVX();
   double vy = mycar->getVY();
-  size_t car_layer = mycar->getLayer();
+  size_t z_coord = mycar->getZ();
   int car_id = mycar->getCarID();
 
   std::cout << std::endl;
@@ -34,8 +34,8 @@ int evolve_car(
     if( t_start > mynet->getFirstTime() ) {
 
       it++;
-      mynet->outputFront();
-      mynet->popFront();
+      mynet->outputNetworkFront();
+      mynet->popNetworkFront();
       mynet->setFirstTime( mynet->getFirstTime() + 1 );
       continue;
 
@@ -47,35 +47,35 @@ int evolve_car(
     // If not, mark it with the car's ID.
     //==========================================================================
 
-    size_t xgrid = 
+    size_t x_coord = 
       size_t(
         ( x_start + vx * ( t_cursor - t_start ) ) / D_X_GRID_LENGTH
       );
-    size_t ygrid = 
+    size_t y_coord = 
       size_t(
         ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH
     );
 
-    if( mynet->getElement( it, car_layer, xgrid, ygrid ) == 0 ) {
+    if( mynet->getNetworkElement( it, x_coord, y_coord, z_coord ) == 0 ) {
 
-      mynet->setElement( it, car_layer, xgrid, ygrid, car_id );
+      mynet->setNetworkElement( it, x_coord, y_coord, z_coord, car_id );
 
     } else {
 
-      if( car_layer == mynet->getLayerNumber() - 1 ) {
+      if( z_coord == mynet->getZSize() - 1 ) {
         std::cout << "Out of layers!" << std::endl;
         return 0;
       }
 
-      car_layer++;
-      mycar->setLayer( car_layer );
+      z_coord++;
+      mycar->setZ( z_coord );
       continue;
 
     }
 
-    std::cout << "time: " << t_cursor << " x: " << std::setw(3) << xgrid;
-    std::cout << " y: " << std::setw(3) << ygrid;
-    std::cout << " z: " << car_layer << " carID: " << car_id;
+    std::cout << "time: " << t_cursor << " x: " << std::setw(3) << x_coord;
+    std::cout << " y: " << std::setw(3) << y_coord;
+    std::cout << " z: " << z_coord << " carID: " << car_id;
     std::cout << std::endl;
 
     t_cursor++;
@@ -92,22 +92,23 @@ int evolve_car(
 
     for( ; t_cursor <= t_end; t_cursor++ ) {
 
-      mynet->add_empty_cube();
+      mynet->addEmptyCubeToNetwork();
 
-      size_t xgrid = 
+      size_t x_coord = 
         size_t(
         ( x_start + vx * ( t_cursor - t_start ) ) / D_X_GRID_LENGTH
       );
-      size_t ygrid = 
+      size_t y_coord = 
         size_t(
         ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH
       );
   
-      mynet->setLastElement( car_layer, xgrid, ygrid, car_id );
+      mynet->setNetworkLastTimeElement( x_coord, y_coord, z_coord, car_id );
 
       std::cout << "Added cube to network!" << std::endl;
-      std::cout << "time: " << t_cursor << " x: " << xgrid << " y: " << ygrid;
-      std::cout << " z: " << car_layer << " carID: " << car_id;
+      std::cout << "time: " << t_cursor;
+      std::cout << " x: " << x_coord << " y: " << y_coord;
+      std::cout << " z: " << z_coord << " carID: " << car_id;
       std::cout << std::endl;
 
     }

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "network.h"
 
-#define CAR_NUMBER   10000
+#define CAR_NUMBER   100
 
 int main()
 {

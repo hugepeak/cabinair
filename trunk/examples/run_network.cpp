@@ -5,6 +5,9 @@
 #include "network.h"
 #include "evolve.h"
 
+#define F_INPUT  "../data_pub/example.txt"
+#define F_OUTPUT "../data_pub/output.txt" 
+
 int main()
 {
 
@@ -14,13 +17,20 @@ int main()
 
   Network * mynet = new Network();
 
-  std::cout << "Current network size: " << mynet->getSize() << std::endl;
+  mynet->openOutputFile( F_OUTPUT );
+
+  if( !mynet->isOutputFileOpen() ) {
+    std::cout << "Unable to open output file!" << std::endl;
+    exit( EXIT_FAILURE );
+  }
+
+  std::cout << "Current network size: " << mynet->getNetworkSize() << std::endl;
 
   //============================================================================
   // Evolve.
   //============================================================================
 
-  std::ifstream myfile( "../data_pub/example.txt" );
+  std::ifstream myfile( F_INPUT );
 
   if( myfile.is_open() ) {
 
@@ -44,7 +54,8 @@ int main()
         exit( EXIT_FAILURE );
       }
   
-      std::cout << "Current network size: " << mynet->getSize() << std::endl;
+      std::cout << "Current network size: ";
+      std::cout << mynet->getNetworkSize() << std::endl;
   
       //mycar->writeOutput();
       delete mycar;
@@ -59,6 +70,8 @@ int main()
 
   }
 
+  mynet->outputNetwork();
+  mynet->closeOutputFile();
   delete mynet;
 
   return 0;

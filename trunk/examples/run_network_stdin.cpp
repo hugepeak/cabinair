@@ -14,7 +14,7 @@ int main()
 
   Network * mynet = new Network();
 
-  std::cout << "Current network size: " << mynet->getSize() << std::endl;
+  std::cout << "Current network size: " << mynet->getNetworkSize() << std::endl;
 
   //============================================================================
   // Evolve.
@@ -43,7 +43,8 @@ int main()
       exit( EXIT_FAILURE );
     }
 
-    std::cout << "Current network size: " << mynet->getSize() << std::endl;
+    std::cout << "Current network size: ";
+    std::cout << mynet->getNetworkSize() << std::endl;
 
     //mycar->writeOutput();
     delete mycar;
