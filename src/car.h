@@ -44,7 +44,7 @@ private:
   time_t duration;
   
   // position(meter)
-  size_t layer;      // layer index 
+  size_t z;      // z index 
   double x_start;
   double y_start;
   double x_end;
@@ -72,8 +72,8 @@ public:
   time_t getDuration() { return duration; }
 
   // position operations
-  void setLayer( size_t _layer ) { layer = _layer; }
-  size_t getLayer() { return layer; }
+  void setZ( size_t _z ) { z = _z; }
+  size_t getZ() { return z; }
   double getXStart() { return x_start; }
   double getYStart() { return y_start; }
   double getXEnd() { return x_end; }
