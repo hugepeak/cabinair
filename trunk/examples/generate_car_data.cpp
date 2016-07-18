@@ -10,12 +10,19 @@
 int main( int argc, char ** argv )
 {
 
-  if( argc != 2 ) {
-    std::cout << "Usage: generate_car_data car_number" << std::endl;
+  if( argc > 2 ) {
+    std::cout << "Usage: generate_car_data (car_number)\n\n";
+    std::cout << "car_number is optional with a default value of 100.\n\n";
     exit( EXIT_FAILURE );
   }
 
-  int i_car_number = boost::lexical_cast<int>( argv[1] ); 
+  int i_car_number;
+
+  if( argc == 2 ) {
+    i_car_number = boost::lexical_cast<int>( argv[1] ); 
+  } else {
+    i_car_number = CAR_NUMBER;
+  }
 
   std::ofstream myfile( OUTPUT_FILE );
 
