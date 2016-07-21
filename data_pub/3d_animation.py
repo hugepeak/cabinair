@@ -83,6 +83,6 @@ ax.set_title('3D Test')
 # Creating the Animation object
 line_ani = animation.FuncAnimation(fig, update_lines, len(car_list)-1, 
                fargs=(data, lines), interval=100, blit=False, repeat = True)
-#line_ani.save('example.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+line_ani.save('example.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 
 plt.show()
