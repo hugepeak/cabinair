@@ -13,6 +13,8 @@ z_size = line[2]
 
 times = []
 car_dict = {}
+car_first_time = {}
+car_last_time = {}
 
 line = input_file.readline().split()
 
@@ -23,10 +25,12 @@ while line:
         carID = int(line[3])
         if carID in car_dict:
             car_dict[carID][times[len(times)-1]] = [line[0],line[1],line[2]]
+            car_last_time[carID] = times[len(times)-1]
         else:
             car_arr = {}
             car_arr[times[len(times)-1]] = [line[0],line[1],line[2]]
             car_dict[carID] = car_arr
+            car_first_time[carID] = times[len(times)-1]
 
     line = input_file.readline().split()
 
@@ -38,7 +42,13 @@ for time in times:
 
         if time not in car_dict[car]:
 
-            car_dict[car][time] = [0,0,0]
+            if time < car_first_time[car]:
+
+                car_dict[car][time] = car_dict[car][car_first_time[car]]
+
+            else:
+
+                car_dict[car][time] = car_dict[car][car_last_time[car]]
 
 data = []
 timelist = sorted(car_dict[car].keys())
