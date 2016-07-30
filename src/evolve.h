@@ -3,6 +3,8 @@
 #include "car.h"
 #include "network.h"
 
+#define DEFAULT_WAIT_TIME  100  // wait time between cars in ms.
+
 Car * createCarFromInputLine(
   Network *,
   std::string
@@ -19,3 +21,7 @@ void remove_car_from_network(
 int move_car(
   Car *, Network *
 );
+inline void my_wait( 
+  clock_t 
+);
+void my_wait();
