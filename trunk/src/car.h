@@ -45,6 +45,7 @@ private:
   
   // position(meter)
   size_t z;      // z index 
+  size_t last_z;
   double x_start;
   double y_start;
   double x_end;
@@ -74,6 +75,8 @@ public:
   // position operations
   void setZ( size_t _z ) { z = _z; }
   size_t getZ() { return z; }
+  void setLastZ( size_t _last_z ) { last_z = _last_z; }
+  size_t getLastZ() { return last_z; }
   double getXStart() { return x_start; }
   double getYStart() { return y_start; }
   double getXEnd() { return x_end; }
