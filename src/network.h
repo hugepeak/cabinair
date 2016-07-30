@@ -18,6 +18,7 @@
 
 #include <vector>
 #include <list>
+#include <queue>
 #include <ctime>
 #include <fstream>
 #include <boost/array.hpp>
@@ -65,7 +66,20 @@ private:
   size_t x_size;
   size_t y_size;
   size_t z_size;
+
+  double x_grid_length;
+  double y_grid_length;
+  double x_min;
+  double y_min;
+
   time_t first_time;
+
+  std::vector<int> car_numbers;
+  std::queue<size_t> min_car_queue;
+  int min_car_number;
+  size_t min_car_z;
+  int z_changing_number;
+
   network_t network;
   std::ofstream output_file;
 
@@ -74,14 +88,31 @@ public:
   Network();
 
   void setXSize( size_t _x_size ) { x_size = _x_size; }
-  size_t getXSize() { return z_size; }
+  size_t getXSize() { return x_size; }
   void setYSize( size_t _y_size ) { y_size = _y_size; }
-  size_t getYSize() { return z_size; }
+  size_t getYSize() { return y_size; }
   void setZSize( size_t _z_size ) { z_size = _z_size; }
   size_t getZSize() { return z_size; }
 
+  void setXGridLength( double value ) { x_grid_length = value; }
+  double getXGridLength() { return x_grid_length; }
+  void setYGridLength( double value ) { y_grid_length = value; }
+  double getYGridLength() { return y_grid_length; }
+  void setXMin( double _x_min ) { x_min = _x_min; }
+  double getXMin() { return x_min; }
+  void setYMin( double _y_min ) { y_min = _y_min; }
+  double getYMin() { return y_min; }
+
   void setFirstTime( time_t _first_time ) { first_time = _first_time; }
   time_t getFirstTime() { return first_time; }
+
+  int getCarNumberInZ( size_t z ) { return car_numbers[z]; }
+  size_t getMinCarZ() { return min_car_z; }
+  void updateMinCarQueue();
+  void updateMinCarQueue( size_t );
+  void addCarInZ( size_t );
+  void deleteCarInZ();
+  void addZChangingNumber() { z_changing_number++; }
 
   void addEmptyCubeToNetwork();
 

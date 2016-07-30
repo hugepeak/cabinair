@@ -1,11 +1,11 @@
 #include "evolve.h"
 
 int evolve_car( 
-  Network * mynet,
-  Car * mycar
+  Car * mycar,
+  Network * mynet
 ) {
 
-  network_it_t it = mynet->getNetworkBegin();
+  add_car_into_network( mycar, mynet );
 
   time_t t_start = mycar->getTimeStart();
   time_t t_cursor = t_start;
@@ -17,6 +17,10 @@ int evolve_car(
   size_t z_coord = mycar->getZ();
   int car_id = mycar->getCarID();
 
+  network_it_t it = mynet->getNetworkBegin();
+  double x_grid_length = mynet->getXGridLength(); 
+  double y_grid_length = mynet->getYGridLength(); 
+
   std::cout << std::endl;
   std::cout << "New car! ID: " << car_id << std::endl;
   std::cout << "x_start: " << x_start << " y_start: " << y_start << std::endl;
@@ -24,22 +28,25 @@ int evolve_car(
   std::cout << " y_end: " << mycar->getYEnd() << std::endl;
   std::cout << "Duration(s): " << mycar->getDuration() << std::endl;
 
+  //============================================================================
+  // Check if the car has a later time than the first time in network.
+  // If so, pop out the past cubes and continue to next time step. 
+  //============================================================================
+
+  while( t_start > mynet->getFirstTime() && it != mynet->getNetworkEnd() ) {
+
+    it++;
+    mynet->outputNetworkFront();
+    mynet->popNetworkFront();
+    mynet->setFirstTime( mynet->getFirstTime() + 1 );
+
+  } 
+
+  //============================================================================
+  // Evolve until the car finishes the trip or hits the network end.
+  //============================================================================
+
   while( t_cursor <= t_end && it != mynet->getNetworkEnd() ) {
-
-    //==========================================================================
-    // Check if the car has a later time than the first time in network.
-    // If so, pop out the past cubes and continue to next time step. 
-    //==========================================================================
-
-    if( t_start > mynet->getFirstTime() ) {
-
-      it++;
-      mynet->outputNetworkFront();
-      mynet->popNetworkFront();
-      mynet->setFirstTime( mynet->getFirstTime() + 1 );
-      continue;
-
-    } 
 
     //==========================================================================
     // Check if the car's position is already taken.
@@ -49,29 +56,27 @@ int evolve_car(
 
     size_t x_coord = 
       size_t(
-        ( x_start + vx * ( t_cursor - t_start ) ) / D_X_GRID_LENGTH
+        ( x_start + vx * ( t_cursor - t_start ) ) / x_grid_length
       );
     size_t y_coord = 
       size_t(
-        ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH
+        ( y_start + vy * ( t_cursor - t_start ) ) / y_grid_length
     );
 
-    if( mynet->getNetworkElement( it, x_coord, y_coord, z_coord ) == 0 ) {
+    while( mynet->getNetworkElement( it, x_coord, y_coord, z_coord ) != 0 ) {
 
-      mynet->setNetworkElement( it, x_coord, y_coord, z_coord, car_id );
+      if( move_car( mycar, mynet ) == 0 ) {
 
-    } else {
-
-      if( z_coord == mynet->getZSize() - 1 ) {
-        std::cout << "Out of layers!" << std::endl;
+        std::cout << "Failed to move car" << std::endl;
         return 0;
+
       }
 
-      z_coord++;
-      mycar->setZ( z_coord );
-      continue;
+      z_coord = mycar->getZ();
 
     }
+
+    mynet->setNetworkElement( it, x_coord, y_coord, z_coord, car_id );
 
     std::cout << "time: " << t_cursor << " x: " << std::setw(3) << x_coord;
     std::cout << " y: " << std::setw(3) << y_coord;
@@ -96,11 +101,11 @@ int evolve_car(
 
       size_t x_coord = 
         size_t(
-        ( x_start + vx * ( t_cursor - t_start ) ) / D_X_GRID_LENGTH
+        ( x_start + vx * ( t_cursor - t_start ) ) / x_grid_length
       );
       size_t y_coord = 
         size_t(
-        ( y_start + vy * ( t_cursor - t_start ) ) / D_Y_GRID_LENGTH
+        ( y_start + vy * ( t_cursor - t_start ) ) / y_grid_length
       );
   
       mynet->setNetworkLastTimeElement( x_coord, y_coord, z_coord, car_id );
@@ -119,7 +124,10 @@ int evolve_car(
 
 }
 
-Car * createCarFromInputLine( std::string line ) {
+Car * createCarFromInputLine( 
+  Network * mynet,
+  std::string line 
+) {
 
   std::istringstream iss( line );
   std::string s_sub;
@@ -152,8 +160,16 @@ Car * createCarFromInputLine( std::string line ) {
     return NULL;
   }
 
-  double d_x_max = D_X_MIN + I_X_SIZE * D_X_GRID_LENGTH;
-  double d_y_max = D_Y_MIN + I_Y_SIZE * D_Y_GRID_LENGTH;
+  double d_x_min = mynet->getXMin();
+  double d_y_min = mynet->getYMin();
+  double x_grid_length = mynet->getXGridLength(); 
+  double y_grid_length = mynet->getYGridLength(); 
+  size_t x_size = mynet->getXSize();
+  size_t y_size = mynet->getYSize();
+
+  double d_x_max = d_x_min + x_size * x_grid_length;
+  double d_y_max = d_y_min + y_size * y_grid_length;
+
   std::vector<double> vd_loc;
   double d_location;
 
@@ -167,11 +183,13 @@ Car * createCarFromInputLine( std::string line ) {
       continue;
     }
 
-    double d_min = ( i % 2 == 0 ) ? D_Y_MIN : D_X_MIN;
+    double d_min = ( i % 2 == 0 ) ? d_y_min : d_x_min;
     double d_max = ( i % 2 == 0 ) ? d_y_max : d_x_max;
 
     if( d_location < d_min || d_location > d_max ) {
       std::cout << "location out of range:" << d_location << std::endl;
+      std::cout << "xmax " << d_x_max << std::endl;
+      std::cout << "ymax " << d_y_max << std::endl;
       return NULL;
     }
 
@@ -182,6 +200,65 @@ Car * createCarFromInputLine( std::string line ) {
   Car * mycar = new Car( i_id, vd_loc[0], vd_loc[1], vd_loc[2], vd_loc[3] );
 
   return mycar;
+
+}
+
+void add_car_into_network(
+  Car * mycar, Network * mynet
+) {
+
+  mycar->setZ( mynet->getMinCarZ() );
+  mycar->setLastZ( mynet->getMinCarZ() );
+
+  mynet->updateMinCarQueue();
+
+}
+
+void remove_car_from_network(
+  Car * mycar, Network * mynet
+) {
+
+  mynet->updateMinCarQueue( mycar->getZ() );
+
+}
+
+int move_car(
+  Car * mycar, Network * mynet
+) {
+
+  size_t z = mycar->getZ();
+
+  if( z != mycar->getLastZ() ) {
+
+    mycar->setZ( mycar->getZ() * 2 - mycar->getLastZ() );
+    mycar->setLastZ( z );
+    std::cout << "Keep moving." << std::endl;
+
+  } else {
+
+    if( z >= mynet->getZSize() / 2 ) {
+
+      mycar->setZ( z - 1 );
+      std::cout << "Move car downward to " << z - 1 << std::endl;
+
+    } else {
+
+      mycar->setZ( z + 1 );
+      std::cout << "Move car upward to " << z - 1 << std::endl;
+
+    }
+
+  }
+
+  if( mycar->getZ() == mynet->getZSize() || mycar->getZ() == 0 ) {
+
+    std::cout << "Out of layers! " << mycar->getZ() << std::endl;
+
+    return 0; 
+
+  }
+
+  return 1;
 
 }
 

@@ -45,10 +45,12 @@ for time in times:
             if time < car_first_time[car]:
 
                 car_dict[car][time] = car_dict[car][car_first_time[car]]
+                car_dict[car][time][2] = 0
 
             else:
 
                 car_dict[car][time] = car_dict[car][car_last_time[car]]
+                car_dict[car][time][2] = 0
 
 data = []
 timelist = sorted(car_dict[car].keys())
@@ -79,13 +81,13 @@ ax = p3.Axes3D(fig)
 lines = [ax.plot(dat[0, 0:1], dat[1, 0:1], dat[2, 0:1])[0] for dat in data]
 
 # Setting the axes properties
-ax.set_xlim3d([0.0, 200.0])
+ax.set_xlim3d([0.0, float(x_size)])
 ax.set_xlabel('X')
 
-ax.set_ylim3d([0.0, 200.0])
+ax.set_ylim3d([0.0, float(y_size)])
 ax.set_ylabel('Y')
 
-ax.set_zlim3d([0.0, 2.0])
+ax.set_zlim3d([0.0, float(z_size)])
 ax.set_zlabel('Z')
 
 ax.set_title('3D Test')
@@ -95,4 +97,4 @@ line_ani = animation.FuncAnimation(fig, update_lines, len(car_list)-1,
                fargs=(data, lines), interval=100, blit=False, repeat = True)
 line_ani.save('example.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 
-plt.show()
+#plt.show()

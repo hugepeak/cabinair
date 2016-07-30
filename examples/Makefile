@@ -21,9 +21,12 @@
 #===============================================================================
 
 SRCDIR = ../src
-BOOSTDIR = /opt/local/include
 GC=g++
 VALGRIND=yes
+
+ifndef BOOSTDIR
+BOOSTDIR = /usr/local/boost_1_61_0
+endif
 
 #===============================================================================
 # End of editing
@@ -31,7 +34,7 @@ VALGRIND=yes
 
 VPATH = $(SRCDIR)
 
-CINCLUDE= -I$(SRCDIR) -isystem$(BOOSTDIR) 
+CINCLUDE= -I$(SRCDIR) -I$(BOOSTDIR) 
 
 #===============================================================================
 # BINDIR is the temporary directory for code executables.

@@ -9,6 +9,7 @@ Car::Car(
   car_index = time_t(car_id * 1e12) + time_start;
   date = 0;
   z = 0;
+  last_z = z;
   x_start = _x_start;
   y_start = _y_start;
   x_end = _x_end;
