@@ -32,14 +32,14 @@ int main()
       exit( EXIT_SUCCESS );
     }
 
-    Car * mycar = createCarFromInputLine( line );
+    Car * mycar = createCarFromInputLine( mynet, line );
 
     if( mycar == NULL ) {
       std::cout << "Exit." << std::endl;
       exit( EXIT_FAILURE );
     }
 
-    if( evolve_car( mynet, mycar ) == 0 ) {
+    if( evolve_car( mycar, mynet ) == 0 ) {
       exit( EXIT_FAILURE );
     }
 
