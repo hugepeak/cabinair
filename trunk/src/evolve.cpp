@@ -262,3 +262,16 @@ int move_car(
 
 }
 
+inline void my_wait( clock_t milisec ) {
+
+  clock_t start_time = clock();
+  clock_t end_time = milisec * 1000 + start_time;
+  while( clock() < end_time );
+
+}
+
+void my_wait() {
+
+  my_wait( DEFAULT_WAIT_TIME );
+
+}

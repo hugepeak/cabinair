@@ -60,6 +60,8 @@ int main()
       //mycar->writeOutput();
       delete mycar;
 
+      my_wait();
+
     }
 
   }
